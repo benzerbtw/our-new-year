@@ -218,6 +218,7 @@ function typeText(el,text){
   el.textContent='';
   let i=0;
   const speed=80;
+  const delayBefore = 1200; // ← ЗАДЕРЖКА перед началом (мс)
   setTimeout(()=>{
     (function typing(){
       if(i<text.length){
@@ -275,6 +276,7 @@ for(let i=0;i<120;i++)flakes.push({x:Math.random()*w,y:Math.random()*h,r:Math.ra
 
 </body>
 </html>
+
 
 
 
