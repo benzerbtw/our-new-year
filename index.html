@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Наш Новый год</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(#ffffff,#f2f5ff);
+  color:#333;
+  overflow-x:hidden;
+  scroll-behavior:smooth;
+}
+
+section{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:40px 20px;
+}
+
+.intro-word{
+  font-weight:300;
+  opacity:0;
+  transform:translateY(30px);
+  margin:10px 0;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(30px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+#startBtn{
+  margin-top:30px;
+  padding:14px 32px;
+  border:none;
+  border-radius:30px;
+  background:#ff9eb5;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 1s ease, transform 1s ease;
+}
+#startBtn.show{
+  opacity:1;
+  transform:translateY(0);
+}
+#startBtn:hover{background:#ff7f9f;}
+
+#intro{
+  background:linear-gradient(#ffe6e6,#fff0f5);
+}
+
+#photos{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:80px 0;
+}
+
+.photo-container{
+  opacity:0;
+  transform:translateY(40px) scale(0.95);
+  transition:all 1s ease;
+  margin:30px 0;
+  width:80%;
+  max-width:380px;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+}
+
+.photo-container img{
+  width:100%;
+  display:block;
+}
+
+.caption{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  padding:12px;
+  background:linear-gradient(transparent,rgba(0,0,0,0.5));
+  color:white;
+  font-size:13px;
+  min-height:48px;
+}
+
+/* КУРСОР ПЕЧАТИ */
+.caption::after{
+  content:'|';
+  margin-left:3px;
+  animation:blink 1s infinite;
+}
+
+@keyframes blink{
+  0%,50%{opacity:1;}
+  51%,100%{opacity:0;}
+}
+
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  pointer-events:none;
+  z-index:999;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="snow"></canvas>
+
+<audio id="music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<section id="intro">
+  <h1 class="intro-word">С тобой этот год стал особенным</h1>
+  <h2 class="intro-word">и незабываемым</h2>
+  <h1 class="intro-word">Спасибо за каждый момент</h1>
+  <button id="startBtn" onclick="start()">Начать</button>
+</section>
+
+<section id="photos"></section>
+
+<section>
+  <p>
+    Спасибо тебе за этот год.<br>
+    За тепло, поддержку и улыбки.<br><br>
+    Пусть следующий будет ещё ближе,<br>
+    ещё теплее и ещё <b>нашим</b>.
+  </p>
+</section>
+
+<script>
+/* intro */
+const words=document.querySelectorAll('.intro-word');
+const btn=document.getElementById('startBtn');
+words.forEach((w,i)=>{
+  setTimeout(()=>w.style.animation='fadeUp 1s forwards',i*1200);
+});
+setTimeout(()=>btn.classList.add('show'),words.length*1200+800);
+
+/* start */
+function start(){
+  const m=document.getElementById('music');
+  m.volume=0.5;
+  m.play().catch(()=>{});
+  autoScroll();
+}
+
+/* texts */
+const photoTexts = [
+  "06.05.2025 — Эти дни начинать больше узнавать тебя 💖",
+  "02.06.2025 — Та самая фотография которая засела",
+  "08.11.2025 — Улыбка, которую я люблю",
+  "06.10.2025 — Ты - мой уютный мир",
+  "08.11.2025 — Наши прогулки ",
+  "15.04.2025 — Люблю, когда ты рядом",
+  "27.10.2025 — Пусть сбудутся все наши желания",
+  "20.11.2025 — Грустняшки((",
+  "17.11.2025 — Теплые дни ",
+  "20.11.2025 — Моя самая красивая",
+  "25.11.2025 — Мой лучик солнца",
+  "29.11.2025 — Когда всё на своём месте",
+  "16.10.2025 — Радость моя, люблю тебя",
+  "08.11.2025 — Эти глаза 💕",
+  "08.11.2025 — В которых можно только тонуть",
+  "08.11.2025 — Хочу таких дней всегда",
+  "18.11.2025 — Люблю тебя видеть каждый день",
+  "18.11.2025 — Люблю быть рядом",
+  "18.11.2025 — Наши воспоминания",
+  "22.12.2025 — Любовь согревает даже зимой",
+  "04.09.2025 — Запрещаю забывать ",
+  "06.10.2025 — Теплые моменты",
+  "06.11.2025 — Ты мой дом",
+  "05.12.2025 — С тобой спокойно",
+  "06.05.2025 — Дорогая моя",
+  "26.05.2025 — Покатушки с которых все началось",
+  "02.12.2025 — Котенок мой",
+  "11.12.2025 — С тобой каждый день - как чудо",
+  "06.12.2025 — Ты и я",
+  "06.12.2025 — Моё счастье",
+  "06.12.2025 — Ты важнее всего",
+  "18.12.2025 — Вместе навсегда",
+  "19.12.2025 — С тобой не холодно ❄️",
+  "11.12.2025 — Милая моя",
+  "24.12.2025 — С тобой весело",
+  "11.12.2025 — Наш Новый год 🎄",
+  "19.12.2025 — Спасибо за этот год",
+  "23.12.2025 — Люблю тебя ❤️"
+];
+
+/* photos */
+const photosSection=document.getElementById('photos');
+for(let i=1;i<=38;i++){
+  const div=document.createElement('div');
+  div.className='photo-container';
+  div.dataset.text=photoTexts[i-1];
+  div.innerHTML=`<img src="photos/${i}.jpg"><div class="caption"></div>`;
+  photosSection.appendChild(div);
+}
+
+/* ПЕЧАТЬ (ИСПРАВЛЕННАЯ) */
+function typeText(el,text){
+  el.textContent='';
+  let i=0;
+  const speed=80;
+
+  setTimeout(()=>{
+    (function typing(){
+      if(i<text.length){
+        el.textContent+=text.charAt(i++);
+        setTimeout(typing,speed);
+      }
+    })();
+  },400);
+}
+
+/* reveal */
+const photos=document.querySelectorAll('.photo-container');
+function reveal(){
+  const t=innerHeight*0.85;
+  photos.forEach(p=>{
+    if(p.getBoundingClientRect().top<t && !p.classList.contains('shown')){
+      p.classList.add('shown');
+      p.style.opacity=1;
+      p.style.transform='translateY(0) scale(1)';
+      typeText(p.querySelector('.caption'),p.dataset.text);
+    }
+  });
+}
+addEventListener('scroll',reveal);
+reveal();
+
+/* auto scroll */
+function autoScroll(){
+  function step(){
+    if(scrollY+innerHeight<document.body.scrollHeight){
+      scrollBy(0,1);
+      requestAnimationFrame(step);
+    }
+  }
+  step();
+}
+
+/* snow */
+const c=document.getElementById('snow'),ctx=c.getContext('2d');
+let w,h,flakes=[];
+function resize(){w=c.width=innerWidth;h=c.height=innerHeight;}
+resize();addEventListener('resize',resize);
+for(let i=0;i<120;i++)flakes.push({x:Math.random()*w,y:Math.random()*h,r:Math.random()*3+1,d:Math.random()+1});
+(function draw(){
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='rgba(255,255,255,.8)';
+  ctx.beginPath();
+  flakes.forEach(f=>{ctx.moveTo(f.x,f.y);ctx.arc(f.x,f.y,f.r,0,Math.PI*2)});
+  ctx.fill();
+  flakes.forEach(f=>{f.y+=f.d*f.d+1;if(f.y>h){f.y=-5;f.x=Math.random()*w}});
+  requestAnimationFrame(draw);
+})();
+</script>
+
+</body>
+</html>
