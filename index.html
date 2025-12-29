@@ -248,7 +248,7 @@ reveal();
 function autoScroll(){
   function step(){
     if(scrollY+innerHeight<document.body.scrollHeight){
-      scrollBy(0,3);
+      scrollBy(0,2);
       requestAnimationFrame(step);
     }
   }
@@ -274,5 +274,6 @@ for(let i=0;i<120;i++)flakes.push({x:Math.random()*w,y:Math.random()*h,r:Math.ra
 
 </body>
 </html>
+
 
 
